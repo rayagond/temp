@@ -78,11 +78,6 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 
 	DBGPR("--> DWC_ETH_QOS_probe\n");
 
-	ret = pci_enable_device(pdev);
-	if (ret) {
-		printk(KERN_ALERT "%s:Unable to enable device\n", DEV_NAME);
-		goto err_out_enb_failed;
-	}
 	if (pci_request_regions(pdev, DEV_NAME)) {
 		printk(KERN_ALERT "%s:Failed to get PCI regions\n", DEV_NAME);
 		ret = -ENODEV;
