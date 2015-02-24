@@ -235,6 +235,12 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 	printk(KERN_ALERT "\n");
 #endif /* end of DWC_ETH_QOS_CONFIG_PGTEST */
 
+	ret = pci_enable_device(pdev);
+	if (ret) {
+		printk(KERN_ALERT "%s:Unable to enable device\n", DEV_NAME);
+		goto err_out_enb_failed;
+	}
+
 	ret = register_netdev(dev);
 	if (ret) {
 		printk(KERN_ALERT "%s: Net device registration failed\n",
