@@ -231,6 +231,12 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 		goto err_out_enb_failed;
 	}
 
+	ret = register_netdev(dev);
+	if (ret) {
+		printk(KERN_ALERT "%s: Net device registration failed\n",
+		    DEV_NAME);
+		goto err_out_netdev_failed;
+	}
 
 	DBGPR("<-- DWC_ETH_QOS_probe\n");
 
