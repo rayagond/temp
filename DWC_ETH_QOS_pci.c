@@ -90,21 +90,6 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 	}
 	pci_set_master(pdev);
 
-	for (i = 0; i <= 5; i++) {
-		if (pci_resource_len(pdev, i) == 0)
-			continue;
-		dwc_eth_qos_pci_base_addr =
-			(ULONG) pci_iomap(pdev, i, COMPLETE_BAR);
-		if ((void __iomem *)dwc_eth_qos_pci_base_addr == NULL) {
-			printk(KERN_ALERT
-			       "%s: cannot map register memory, aborting",
-			       pci_name(pdev));
-			ret = -EIO;
-			goto err_out_map_failed;
-		}
-		break;
-	}
-
 	DBGPR("dwc_eth_qos_pci_base_addr = %#lx\n", dwc_eth_qos_pci_base_addr);
 
 	/* queue count */
