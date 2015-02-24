@@ -78,11 +78,6 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 
 	DBGPR("--> DWC_ETH_QOS_probe\n");
 
-	ret = pci_enable_device(pdev);
-	if (ret) {
-		printk(KERN_ALERT "%s:Unable to enable device\n", DEV_NAME);
-		goto err_out_enb_failed;
-	}
 	if (pci_request_regions(pdev, DEV_NAME)) {
 		printk(KERN_ALERT "%s:Failed to get PCI regions\n", DEV_NAME);
 		ret = -ENODEV;
@@ -93,15 +88,6 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 	for (i = 0; i <= 5; i++) {
 		if (pci_resource_len(pdev, i) == 0)
 			continue;
-		dwc_eth_qos_pci_base_addr =
-			(ULONG) pci_iomap(pdev, i, COMPLETE_BAR);
-		if ((void __iomem *)dwc_eth_qos_pci_base_addr == NULL) {
-			printk(KERN_ALERT
-			       "%s: cannot map register memory, aborting",
-			       pci_name(pdev));
-			ret = -EIO;
-			goto err_out_map_failed;
-		}
 		break;
 	}
 
@@ -230,10 +216,6 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 
 #endif /* end of DWC_ETH_QOS_CONFIG_PGTEST */
 
-	spin_lock_init(&pdata->lock);
-	spin_lock_init(&pdata->tx_lock);
-	spin_lock_init(&pdata->pmt_lock);
-
 #ifdef DWC_ETH_QOS_CONFIG_PGTEST
 	ret = DWC_ETH_QOS_alloc_pg(pdata);
 	if (ret < 0) {
@@ -248,6 +230,12 @@ int __devinit DWC_ETH_QOS_probe(struct pci_dev *pdev,
 	printk(KERN_ALERT "*******************************************/\n");
 	printk(KERN_ALERT "\n");
 #endif /* end of DWC_ETH_QOS_CONFIG_PGTEST */
+
+	ret = pci_enable_device(pdev);
+	if (ret) {
+		printk(KERN_ALERT "%s:Unable to enable device\n", DEV_NAME);
+		goto err_out_enb_failed;
+	}
 
 	ret = register_netdev(dev);
 	if (ret) {
